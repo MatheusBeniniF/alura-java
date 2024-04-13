@@ -1,8 +1,13 @@
 package br.com.alura.screenmatch.modelo;
 
+import br.com.alura.screenmatch.excessao.ErroDeConversaoDeAnoException;
+import com.google.gson.annotations.SerializedName;
+
 public class Titulo implements Comparable<Titulo> {
+    @SerializedName("Title")
     private String nome;
     private int anoDeLancamento;
+    @SerializedName("Year")
     private boolean incluidoNoOlano;
     private double somaDasAvaliacoes;
     private int totalDeAvaliacaoes;
@@ -11,6 +16,15 @@ public class Titulo implements Comparable<Titulo> {
     public Titulo(String nome, int anoDeLancamento) {
         this.nome = nome;
         this.anoDeLancamento = anoDeLancamento;
+    }
+
+    public Titulo(TituloOmdb meuTituloOmdb) throws ErroDeConversaoDeAnoException {
+        this.nome = meuTituloOmdb.title();
+        if(meuTituloOmdb.year().length() > 4) {
+            throw new ErroDeConversaoDeAnoException("Nao consegui converter o ano");
+        }
+        this.anoDeLancamento = Integer.valueOf(meuTituloOmdb.year());
+        this.duracaoEmMinutos = Integer.valueOf(meuTituloOmdb.runtime().substring(0,2));
     }
 
     public void setNome(String nome) {
@@ -66,5 +80,13 @@ public class Titulo implements Comparable<Titulo> {
     @Override
     public int compareTo(Titulo titulo) {
         return this.getNome().compareTo(titulo.getNome());
+    }
+
+    @Override
+    public String toString() {
+        return
+                "nome = " + nome +
+                " anoDeLancamento = " + anoDeLancamento +
+                " duracao = " + duracaoEmMinutos;
     }
 }
